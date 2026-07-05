@@ -8,24 +8,22 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --ink: #14122B;
-    --ink-soft: #211F45;
-    --paper: #F7F7FA;
-    --paper-2: #FFFFFF;
-    --coral: #FF4D2E;
-    --indigo: #5B5FEF;
-    --text: #1B1A2E;
-    --muted: #6B6B80;
-    --line: rgba(20,18,43,0.10);
-    --line-light: rgba(255,255,255,0.14);
+    --bg: #07070A;
+    --panel: #0D0D11;
+    --red: #E8283F;
+    --red-glow: rgba(232,40,63,0.45);
+    --green: #37E37A;
+    --text: #ECECF1;
+    --muted: #8B8B96;
+    --line: rgba(255,255,255,0.08);
+    --line-red: rgba(232,40,63,0.28);
 
-    --display: 'Fraunces', serif;
-    --body: 'Inter', sans-serif;
     --mono: 'JetBrains Mono', monospace;
+    --body: 'Inter', sans-serif;
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -33,9 +31,20 @@
   body{
     font-family: var(--body);
     color: var(--text);
-    background: var(--paper);
+    background: var(--bg);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* CRT scanlines + vignette, fixed over the whole viewport */
+  body::before{
+    content:''; position:fixed; inset:0; z-index:9999; pointer-events:none;
+    background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode: overlay; opacity: 0.55;
+  }
+  body::after{
+    content:''; position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 120%);
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -43,14 +52,14 @@
   }
 
   a{ color: inherit; }
-  :focus-visible{ outline: 2px solid var(--coral); outline-offset: 3px; }
+  :focus-visible{ outline: 2px solid var(--red); outline-offset: 3px; }
 
   .wrap{ max-width: 1100px; margin: 0 auto; padding: 0 28px; }
 
   /* ---------- NAV ---------- */
   nav{
     position: sticky; top:0; z-index: 50;
-    background: rgba(247,247,250,0.86);
+    background: rgba(7,7,10,0.86);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
@@ -59,23 +68,28 @@
     height: 64px;
   }
   .brand{
-    font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.04em;
-    color: var(--text); text-decoration: none; font-weight: 500;
+    font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.02em;
+    color: var(--red); text-decoration: none; font-weight: 500;
   }
   .navlinks{ display:flex; gap: 28px; list-style:none; }
   .navlinks a{
-    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.03em;
-    text-decoration:none; color: var(--muted); text-transform: lowercase;
-    transition: color 0.15s ease;
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em;
+    text-decoration:none; color: var(--muted);
+    transition: color 0.15s ease, text-shadow 0.15s ease;
   }
-  .navlinks a:hover{ color: var(--coral); }
+  .navlinks a:hover{ color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
 
   /* ---------- HERO ---------- */
   .hero{
     position: relative;
-    background: var(--ink);
+    background:
+      radial-gradient(ellipse at 72% 45%, rgba(232,40,63,0.10), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0px, transparent 1px, transparent 40px),
+      var(--bg);
     color: #fff;
     overflow: hidden;
+    border-bottom: 1px solid var(--line-red);
   }
   .hero .wrap{
     position: relative;
@@ -84,65 +98,111 @@
     padding-top: 64px; padding-bottom: 64px;
   }
   .hero-eyebrow{
-    font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.08em;
-    color: rgba(255,255,255,0.55); margin-bottom: 22px;
+    font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.06em;
+    color: rgba(236,236,241,0.6); margin-bottom: 22px;
     display:flex; align-items:center; gap: 10px;
+    text-transform: uppercase;
   }
   .hero-eyebrow .dot{
-    width:7px; height:7px; border-radius:50%; background: var(--coral);
-    flex-shrink:0;
+    width:7px; height:7px; border-radius:50%; background: var(--red);
+    flex-shrink:0; box-shadow: 0 0 8px var(--red-glow);
+    animation: pulse 2.4s ease-in-out infinite;
   }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
   h1.name{
-    font-family: var(--display);
-    font-weight: 600;
-    font-size: clamp(3rem, 9vw, 6.4rem);
-    line-height: 0.98;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 7.4vw, 5.2rem);
+    line-height: 1.02;
     letter-spacing: -0.01em;
-    max-width: 14ch;
+    max-width: 16ch;
+    position: relative;
   }
-  h1.name .last{ color: var(--coral); font-style: italic; font-weight: 500; }
+  h1.name .last{ color: var(--red); }
+
+  /* one-shot glitch-in on load */
+  .glitch::before, .glitch::after{
+    content: attr(data-text);
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    overflow:hidden; background:transparent; pointer-events:none;
+  }
+  .glitch::before{ color: var(--red); left:2px; animation: glitchTop 1.2s linear 1; }
+  .glitch::after{ color: var(--green); left:-2px; animation: glitchBottom 1.2s linear 1; }
+  @keyframes glitchTop{
+    0%{ clip-path: inset(0 0 85% 0); transform: translate(-3px,-1px); opacity:0.9; }
+    12%{ clip-path: inset(10% 0 60% 0); transform: translate(3px,1px); }
+    26%{ clip-path: inset(40% 0 30% 0); transform: translate(-2px,0); }
+    38%{ clip-path: inset(60% 0 10% 0); transform: translate(2px,-1px); }
+    52%{ clip-path: inset(20% 0 50% 0); transform: translate(-3px,1px); }
+    65%,100%{ clip-path: inset(0 0 100% 0); transform: translate(0,0); opacity:0; }
+  }
+  @keyframes glitchBottom{
+    0%{ clip-path: inset(85% 0 0 0); transform: translate(3px,1px); opacity:0.9; }
+    16%{ clip-path: inset(50% 0 20% 0); transform: translate(-3px,-1px); }
+    32%{ clip-path: inset(20% 0 60% 0); transform: translate(2px,1px); }
+    48%{ clip-path: inset(70% 0 5% 0); transform: translate(-2px,-1px); }
+    70%,100%{ clip-path: inset(100% 0 0 0); transform: translate(0,0); opacity:0; }
+  }
+
   .hero-sub{
     margin-top: 26px;
+    font-family: var(--body);
     font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-    color: rgba(255,255,255,0.78);
+    color: rgba(236,236,241,0.78);
     max-width: 46ch;
     font-weight: 400;
   }
+  .cursor{ display:inline-block; color: var(--red); animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
+
   .hero-meta{
     margin-top: 36px;
     display:flex; gap: 22px; flex-wrap: wrap;
-    font-family: var(--mono); font-size: 0.82rem; color: rgba(255,255,255,0.5);
+    font-family: var(--mono); font-size: 0.82rem; color: rgba(236,236,241,0.5);
   }
-  .hero-meta span strong{ color: rgba(255,255,255,0.85); font-weight: 500; }
+  .hero-meta span strong{ color: rgba(236,236,241,0.9); font-weight: 500; }
+
+  .divergence-line{
+    margin-top: 30px;
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.05em;
+    color: var(--muted);
+    border: 1px solid var(--line-red); padding: 8px 14px; border-radius: 3px;
+    background: rgba(232,40,63,0.05);
+    width: fit-content;
+  }
+  .divergence-line span{ color: var(--red); font-weight: 600; }
 
   .disk-field{
     position: absolute; right: -6%; top: 50%; transform: translateY(-50%);
     width: min(58vw, 640px); height: min(58vw, 640px);
-    opacity: 0.95;
+    opacity: 0.9;
     pointer-events: none;
   }
-  .disk-field svg{ width:100%; height:100%; animation: spin 140s linear infinite; transform-origin: 50% 50%; }
+  .disk-field svg{ width:100%; height:100%; animation: spin 160s linear infinite; transform-origin: 50% 50%; }
   @keyframes spin{ to{ transform: rotate(360deg); } }
 
   @media (max-width: 880px){
-    .disk-field{ right: 50%; top: auto; bottom: -12%; transform: translateX(50%); width: 86vw; height: 86vw; opacity: 0.35; }
+    .disk-field{ right: 50%; top: auto; bottom: -12%; transform: translateX(50%); width: 86vw; height: 86vw; opacity: 0.3; }
   }
 
   /* ---------- SECTION SCAFFOLD ---------- */
   section.block{ padding: 96px 0; border-bottom: 1px solid var(--line); }
   section.block:last-of-type{ border-bottom: none; }
   .section-head{
-    display:grid; grid-template-columns: 100px 1fr; gap: 24px;
+    display:grid; grid-template-columns: 140px 1fr; gap: 24px;
     margin-bottom: 48px;
   }
   .tag{
-    font-family: var(--mono); font-size: 0.85rem; color: var(--coral);
+    font-family: var(--mono); font-size: 0.82rem; color: var(--red);
     padding-top: 6px;
   }
   h2{
-    font-family: var(--display); font-weight: 600; font-style: italic;
-    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    font-family: var(--mono); font-weight: 600;
+    font-size: clamp(1.5rem, 2.8vw, 2.1rem);
     letter-spacing: -0.01em;
+    color: var(--text);
   }
   .section-body{ grid-column: 2; }
   @media (max-width: 680px){
@@ -154,11 +214,13 @@
   .about-grid{ display:grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: start; }
   .initial-block{
     width: 120px; height: 120px;
-    background: var(--indigo);
-    color:#fff;
+    background: var(--panel);
+    border: 1px solid var(--line-red);
+    color: var(--red);
     display:flex; align-items:center; justify-content:center;
-    font-family: var(--display); font-style: italic; font-weight: 600; font-size: 2.6rem;
-    border-radius: 6px;
+    font-family: var(--mono); font-weight: 700; font-size: 1.6rem;
+    border-radius: 4px;
+    box-shadow: 0 0 24px rgba(232,40,63,0.08) inset;
   }
   .about-text p{ color: var(--text); font-size: 1.05rem; max-width: 60ch; }
   .about-text p + p{ margin-top: 16px; }
@@ -171,18 +233,17 @@
     background: var(--line); border: 1px solid var(--line);
   }
   .interest{
-    background: var(--paper-2); padding: 26px 24px;
+    background: var(--panel); padding: 26px 24px;
   }
-  .interest .num{ font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
+  .interest .num{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); }
   .interest h3{
-    font-family: var(--display); font-style: italic; font-weight: 600;
-    font-size: 1.25rem; margin-top: 8px;
+    font-family: var(--mono); font-weight: 600;
+    font-size: 1.1rem; margin-top: 8px; color: var(--text);
   }
   .interest p{ margin-top: 8px; color: var(--muted); font-size: 0.92rem; }
-  .interest.exploring{ position: relative; }
   .status-note{
     margin-top: 28px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted);
-    border-left: 2px solid var(--coral); padding-left: 14px;
+    border-left: 2px solid var(--red); padding-left: 14px;
   }
   @media (max-width: 680px){ .interest-grid{ grid-template-columns: 1fr; } }
 
@@ -195,14 +256,17 @@
   .paper-item:last-child{ border-bottom: 1px solid var(--line); }
   .paper-year{ font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
   .paper-title{ font-weight: 500; font-size: 1.02rem; }
+  .paper-title::before{ content: '> '; color: var(--red); font-family: var(--mono); }
   .paper-venue{ color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
   .paper-link{
     font-family: var(--mono); font-size: 0.78rem; text-decoration: none;
-    color: var(--indigo); white-space: nowrap;
+    color: var(--muted); white-space: nowrap;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
   }
-  .paper-link:hover{ color: var(--coral); }
+  .paper-link:hover{ color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
   .paper-placeholder{
     color: var(--muted); font-style: italic; font-size: 0.95rem; padding: 22px 0;
+    font-family: var(--mono);
   }
   @media (max-width: 680px){
     .paper-item{ grid-template-columns: 1fr; gap: 6px; }
@@ -211,60 +275,76 @@
   /* ---------- CV ---------- */
   .cv-row{
     display:flex; align-items:center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-    background: var(--ink); color:#fff; padding: 36px 40px; border-radius: 4px;
+    background: var(--panel); border: 1px solid var(--line-red); color:#fff; padding: 36px 40px; border-radius: 4px;
   }
-  .cv-row p{ color: rgba(255,255,255,0.65); font-size: 0.95rem; max-width: 42ch; }
-  .cv-row h3{ font-family: var(--display); font-style: italic; font-weight: 600; font-size: 1.4rem; margin-bottom: 8px; }
+  .cv-row p{ color: var(--muted); font-size: 0.95rem; max-width: 42ch; }
+  .cv-row h3{ font-family: var(--mono); font-weight: 600; font-size: 1.2rem; margin-bottom: 8px; color: var(--text); }
   .btn{
     font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.02em;
-    background: var(--coral); color: #fff; text-decoration:none;
+    background: transparent; border: 1px solid var(--red); color: var(--red); text-decoration:none;
     padding: 14px 26px; border-radius: 3px; white-space: nowrap;
-    transition: transform 0.15s ease, background 0.15s ease;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
     display:inline-block;
   }
-  .btn:hover{ background: #ff6644; transform: translateY(-1px); }
+  .btn:hover{ background: var(--red); color: #07070A; transform: translateY(-1px); box-shadow: 0 0 20px var(--red-glow); }
 
   /* ---------- CONTACT ---------- */
   .contact-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-  .contact-item{ }
-  .contact-item .label{ font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .contact-item .label{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); text-transform: uppercase; letter-spacing: 0.05em; }
+  .contact-item .label::before{ content: '> '; }
   .contact-item .value{ margin-top: 8px; font-size: 1.05rem; }
   .contact-item a{ text-decoration: none; border-bottom: 1px solid var(--line); }
-  .contact-item a:hover{ border-color: var(--coral); color: var(--coral); }
+  .contact-item a:hover{ border-color: var(--red); color: var(--red); }
   @media (max-width: 680px){ .contact-grid{ grid-template-columns: 1fr; gap: 24px; } }
 
   footer{
     padding: 36px 0 56px;
     font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
     display:flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    border-top: 1px solid var(--line);
   }
+
+  /* ---------- DIVERGENCE METER WIDGET ---------- */
+  .divergence-meter{
+    position: fixed; right: 18px; bottom: 18px; z-index: 40;
+    font-family: var(--mono); font-size: 0.7rem;
+    background: rgba(13,13,17,0.9); border: 1px solid var(--line-red);
+    padding: 10px 14px; border-radius: 4px;
+    color: var(--muted);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  }
+  .divergence-meter .dm-label{ display:block; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .divergence-meter .dm-value{ color: var(--red); font-weight: 600; }
+  @media (max-width: 680px){ .divergence-meter{ display:none; } }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="wrap">
-    <a href="#" class="brand">PGP — mathematics</a>
+    <a href="#" class="brand">root@pgp-lab:~$</a>
     <ul class="navlinks">
-      <li><a href="#about">about</a></li>
-      <li><a href="#research">research</a></li>
-      <li><a href="#papers">papers</a></li>
-      <li><a href="#cv">cv</a></li>
-      <li><a href="#contact">contact</a></li>
+      <li><a href="#about">./about</a></li>
+      <li><a href="#research">./research</a></li>
+      <li><a href="#papers">./papers</a></li>
+      <li><a href="#cv">./cv</a></li>
+      <li><a href="#contact">./contact</a></li>
     </ul>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap">
-    <div class="hero-eyebrow"><span class="dot"></span>grad student · pure mathematics</div>
-    <h1 class="name">Pedro <span class="last">Gomes Pinto</span></h1>
-    <p class="hero-sub">I study structure for its own sake — currently narrowing down a research direction somewhere between Differential Geometry and Algebraic Topology.</p>
+    <div class="hero-eyebrow"><span class="dot"></span>observing worldline β · grad student, pure mathematics</div>
+    <h1 class="name glitch" data-text="Pedro Gomes Pinto">Pedro <span class="last">Gomes Pinto</span></h1>
+    <p class="hero-sub">I study structure for its own sake — currently narrowing down a research direction somewhere between Differential Geometry and Algebraic Topology.<span class="cursor">_</span></p>
     <div class="hero-meta">
-      <span>starting <strong>fall 2026</strong></span>
-      <span><strong>masters</strong>, Université de Lorraine</span>
-      <span><strong>prev.</strong> Université de Lorraine</span>
+      <span>&gt; starting <strong>fall 2026</strong></span>
+      <span>&gt; <strong>masters</strong>, Université de Lorraine</span>
+      <span>&gt; <strong>prev.</strong> Université de Lorraine</span>
     </div>
+    <div class="divergence-line">DIVERGENCE: <span>1.048596%</span></div>
   </div>
   <div class="disk-field" id="disk-field" aria-hidden="true"></div>
 </header>
@@ -272,8 +352,8 @@
 <section class="block" id="about">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">§1</div>
-      <h2>About</h2>
+      <div class="tag">root@lab:~$</div>
+      <h2>cat about.md<span class="cursor">▋</span></h2>
     </div>
     <div class="section-body about-grid">
       <div class="initial-block">PGP</div>
@@ -287,23 +367,23 @@
 <section class="block" id="research">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">§2</div>
-      <h2>Research interests</h2>
+      <div class="tag">root@lab:~$</div>
+      <h2>ls research/ -la<span class="cursor">▋</span></h2>
     </div>
     <div class="section-body">
       <div class="interest-grid">
-        <div class="interest exploring">
-          <div class="num">01</div>
+        <div class="interest">
+          <div class="num">CASE_01</div>
           <h3>Differential Geometry</h3>
           <p>Global structure of Lorentzian spacetimes; causality theory (global hyperbolicity, chronology protection); orientability and its physical consequences (chirality, spin structures); the geometry of spacelike foliations and the initial value problem in General Relativity.</p>
         </div>
-        <div class="interest exploring">
-          <div class="num">02</div>
+        <div class="interest">
+          <div class="num">CASE_02</div>
           <h3>Topological Methods in Quantum Cosmology</h3>
           <p>Superspace and the space of 3-geometries; fiber bundles and foliations over parameter spaces; vacuum tunneling and instanton transitions between topologically distinct universes; the string landscape as a discrete topological phase space.</p>
         </div>
-        <div class="interest exploring">
-          <div class="num">03</div>
+        <div class="interest">
+          <div class="num">CASE_03</div>
           <h3>Formal Ontology of Physical Theories</h3>
           <p>Structural realism and the mathematical foundations of physical models; using category theory and sheaf theory to formalize inter-theoretic relations; model-theoretic approaches to multiverse scenarios and simulation hypotheses.</p>
         </div>
@@ -316,8 +396,8 @@
 <section class="block" id="papers">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">§3</div>
-      <h2>Papers &amp; preprints</h2>
+      <div class="tag">root@lab:~$</div>
+      <h2>find . -iname "*.pdf"<span class="cursor">▋</span></h2>
     </div>
     <div class="section-body">
       <div class="paper-list">
@@ -327,21 +407,21 @@
           <div>
               <div class="paper-title">Meta-Topological Structures in Narrative Quantum Cosmology</div>
           </div>
-          <a href="SciADVpaper.pdf" class="paper-link">PDF ↗</a>
+          <a href="SciADVpaper.pdf" class="paper-link">[ OPEN ]</a>
         </div>
         <div class="paper-item">
           <div class="paper-year">2025</div>
           <div>
               <div class="paper-title">La cohomologie de De Rham et l'orientabilité des variétés lisses (Undergrad thesis)</div>
           </div>
-          <a href="Cohomologypaper.pdf" class="paper-link">PDF ↗</a>
+          <a href="Cohomologypaper.pdf" class="paper-link">[ OPEN ]</a>
         </div>
         <div class="paper-item">
           <div class="paper-year">2023</div>
           <div>
               <div class="paper-title">Application de la théorie des noeuds à l'ADN (Bachelors thesis)</div>
           </div>
-          <a href="Knotpaper.pdf" class="paper-link">PDF ↗</a>
+          <a href="Knotpaper.pdf" class="paper-link">[ OPEN ]</a>
         </div>
       </div>
     </div>
@@ -351,8 +431,8 @@
 <section class="block" id="cv">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">§4</div>
-      <h2>Curriculum vitae</h2>
+      <div class="tag">root@lab:~$</div>
+      <h2>open cv.pdf<span class="cursor">▋</span></h2>
     </div>
     <div class="section-body">
       <div class="cv-row">
@@ -360,7 +440,7 @@
           <h3>Full CV (PDF)</h3>
           <p>Education, talks, teaching experience, and awards in one document — keep it current each term.</p>
         </div>
-        <a href="cv.pdf" class="btn">Download CV ↓</a>
+        <a href="cv.pdf" class="btn">[ DOWNLOAD_CV.PDF ]</a>
       </div>
     </div>
   </div>
@@ -369,8 +449,8 @@
 <section class="block" id="contact">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">§5</div>
-      <h2>Contact</h2>
+      <div class="tag">root@lab:~$</div>
+      <h2>whois pedro<span class="cursor">▋</span></h2>
     </div>
     <div class="section-body">
       <div class="contact-grid">
@@ -382,7 +462,7 @@
           <div class="label">Office</div>
           <div class="value">UFR MiM · Mathematics laboratory · Université de Lorraine</div>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -393,18 +473,22 @@
   <p>
     Articles on this site are licensed under
     <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">
-      <img alt="Creative Commons License" style="border-width:0; vertical-align:middle;" 
+      <img alt="Creative Commons License" style="border-width:0; vertical-align:middle;"
            src="https://licensebuttons.net/l/by/4.0/88x31.png" />
       CC BY 4.0
     </a>.
   </p>
 </footer>
 
+<div class="divergence-meter" id="divergence-meter" aria-hidden="true">
+  <span class="dm-label">DIVERGENCE METER</span>
+  <span class="dm-value" id="dm-value">1.048596%</span>
+</div>
+
 <script>
 // Signature element: a Poincaré-disk geodesic web, inspired by hyperbolic
-// tessellations (the kind that show up in complex analysis / topology).
-// Each "geodesic" is an arc of a circle orthogonal to the boundary circle —
-// the actual definition of a straight line in the hyperbolic disk model.
+// tessellations (the kind that show up in complex analysis / topology),
+// recolored to read as a lab schematic / circuit trace overlay.
 (function(){
   const field = document.getElementById('disk-field');
   if(!field) return;
@@ -412,7 +496,7 @@
   const size = 600;
   const r = size/2 - 4;
   const cx = size/2, cy = size/2;
-  const colors = ['#FF4D2E', '#5B5FEF', 'rgba(255,255,255,0.45)'];
+  const colors = ['#E8283F', '#7A1420', 'rgba(255,255,255,0.4)'];
 
   function toXY(theta){
     return [cx + r*Math.cos(theta), cy + r*Math.sin(theta)];
@@ -441,7 +525,7 @@
   }
 
   let svg = `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
-  svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(232,40,63,0.3)" stroke-width="1.5"/>`;
 
   const N = 18; // points on the boundary
   const steps = [3, 5, 8]; // connection offsets -> tiling-like density
@@ -459,11 +543,25 @@
   for(let i=0;i<N;i++){
     const t = (i/N)*Math.PI*2;
     const [x,y] = toXY(t);
-    svg += `<circle cx="${x}" cy="${y}" r="2.2" fill="rgba(255,255,255,0.5)"/>`;
+    svg += `<rect x="${x-2.4}" y="${y-2.4}" width="4.8" height="4.8" fill="rgba(255,255,255,0.55)"/>`;
   }
 
   svg += `</svg>`;
   field.innerHTML = svg;
+})();
+
+// Divergence meter: ticks its trailing digits to sell a "live reading",
+// idle otherwise. Skipped for reduced-motion users.
+(function(){
+  const el = document.getElementById('dm-value');
+  if(!el) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion) return;
+
+  setInterval(function(){
+    const jitter = (Math.random() * 0.02).toFixed(6);
+    el.textContent = (1.048596 + parseFloat(jitter) - 0.01).toFixed(6) + '%';
+  }, 2600);
 })();
 </script>
 
