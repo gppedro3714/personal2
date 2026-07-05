@@ -313,7 +313,9 @@
     color: var(--muted);
     backdrop-filter: blur(6px);
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    opacity: 1; transition: opacity 0.25s ease;
   }
+  .divergence-meter.near-footer{ opacity: 0; pointer-events: none; }
   .divergence-meter .dm-label{ display:block; letter-spacing: 0.06em; margin-bottom: 4px; }
   .divergence-meter .dm-value{ color: var(--red); font-weight: 600; }
   @media (max-width: 680px){ .divergence-meter{ display:none; } }
@@ -562,6 +564,22 @@
     const jitter = (Math.random() * 0.02).toFixed(6);
     el.textContent = (1.048596 + parseFloat(jitter) - 0.01).toFixed(6) + '%';
   }, 2600);
+})();
+
+// Hide the divergence meter once the footer scrolls into view, so it
+// doesn't sit on top of the copyright/license line.
+(function(){
+  const meter = document.getElementById('divergence-meter');
+  const footer = document.querySelector('footer');
+  if(!meter || !footer) return;
+
+  const observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      meter.classList.toggle('near-footer', entry.isIntersecting);
+    });
+  }, { rootMargin: '0px 0px -0px 0px' });
+
+  observer.observe(footer);
 })();
 </script>
 
