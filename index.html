@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pedro Gomes Pinto — Mathematics</title>
-<meta name="description" content="Personal academic page of GOMES PINTO Pedro, grad student in pure mathematics.">
+<meta name="description" content="Personal academic page of Pedro Gomes Pinto, graduate student in pure mathematics at Université de Lorraine.">
+<meta name="theme-color" content="#07070A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2307070A'/%3E%3Ccircle cx='16' cy='16' r='10' fill='none' stroke='%23E8283F' stroke-width='2'/%3E%3Cpath d='M6 16 A 8 8 0 0 0 22 10' fill='none' stroke='%23E8283F' stroke-width='1.5'/%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,16 +16,19 @@
   :root{
     --bg: #07070A;
     --panel: #0D0D11;
+    --panel-hi: #121218;
     --red: #E8283F;
     --red-glow: rgba(232,40,63,0.45);
+    --red-soft: rgba(232,40,63,0.07);
     --green: #37E37A;
     --text: #ECECF1;
     --muted: #8B8B96;
     --line: rgba(255,255,255,0.08);
     --line-red: rgba(232,40,63,0.28);
 
-    --mono: 'JetBrains Mono', monospace;
-    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --nav-h: 64px;
   }
 
   *{ box-sizing: border-box; margin:0; padding:0; }
@@ -34,7 +39,9 @@
     background: var(--bg);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
+  ::selection{ background: var(--red); color: var(--bg); }
 
   /* CRT scanlines + vignette, fixed over the whole viewport */
   body::before{
@@ -48,11 +55,18 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+    *, *::before, *::after{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
   }
 
   a{ color: inherit; }
   :focus-visible{ outline: 2px solid var(--red); outline-offset: 3px; }
+
+  .skip{
+    position:absolute; left: 12px; top: -48px; z-index: 100;
+    font-family: var(--mono); font-size: 0.8rem;
+    background: var(--red); color: var(--bg); padding: 8px 12px; border-radius: 3px; text-decoration: none;
+  }
+  .skip:focus{ top: 12px; }
 
   .wrap{ max-width: 1100px; margin: 0 auto; padding: 0 28px; }
 
@@ -60,24 +74,44 @@
   nav{
     position: sticky; top:0; z-index: 50;
     background: rgba(7,7,10,0.86);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
   nav .wrap{
-    display:flex; align-items:center; justify-content: space-between;
-    height: 64px;
+    display:flex; align-items:center; justify-content: space-between; gap: 20px;
+    height: var(--nav-h);
   }
   .brand{
     font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.02em;
-    color: var(--red); text-decoration: none; font-weight: 500;
+    color: var(--red); text-decoration: none; font-weight: 500; white-space: nowrap;
   }
+  .brand .caret{ animation: blink 1s steps(1) infinite; }
   .navlinks{ display:flex; gap: 28px; list-style:none; }
   .navlinks a{
+    position: relative;
     font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em;
-    text-decoration:none; color: var(--muted);
+    text-decoration:none; color: var(--muted); white-space: nowrap;
+    padding: 6px 0;
     transition: color 0.15s ease, text-shadow 0.15s ease;
   }
-  .navlinks a:hover{ color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
+  .navlinks a::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background: var(--red); box-shadow: 0 0 6px var(--red-glow);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease;
+  }
+  .navlinks a:hover, .navlinks a[aria-current="true"]{ color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
+  .navlinks a[aria-current="true"]::after{ transform: scaleX(1); }
+
+  @media (max-width: 760px){
+    :root{ --nav-h: 96px; }
+    nav .wrap{ flex-direction: column; align-items: flex-start; justify-content: center; gap: 8px; }
+    .navlinks{
+      gap: 20px; width: 100%;
+      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .navlinks::-webkit-scrollbar{ display:none; }
+  }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -92,10 +126,10 @@
     border-bottom: 1px solid var(--line-red);
   }
   .hero .wrap{
-    position: relative;
-    min-height: 86vh;
+    position: relative; z-index: 1;
+    min-height: calc(92vh - var(--nav-h));
     display:flex; flex-direction: column; justify-content: center;
-    padding-top: 64px; padding-bottom: 64px;
+    padding-top: 72px; padding-bottom: 72px;
   }
   .hero-eyebrow{
     font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.06em;
@@ -115,20 +149,23 @@
     font-weight: 700;
     font-size: clamp(2.4rem, 7.4vw, 5.2rem);
     line-height: 1.02;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     max-width: 16ch;
     position: relative;
+    text-shadow: 0 0 32px rgba(232,40,63,0.12);
   }
-  h1.name .last{ color: var(--red); }
+  h1.name .last{ color: var(--red); text-shadow: 0 0 24px var(--red-glow); }
 
-  /* one-shot glitch-in on load */
+  /* one-shot glitch-in on load. The pseudo-elements are hidden at rest so
+     the colored copies don't stay painted over the name once it finishes. */
   .glitch::before, .glitch::after{
     content: attr(data-text);
     position:absolute; left:0; top:0; width:100%; height:100%;
     overflow:hidden; background:transparent; pointer-events:none;
+    clip-path: inset(0 0 100% 0); opacity: 0;
   }
-  .glitch::before{ color: var(--red); left:2px; animation: glitchTop 1.2s linear 1; }
-  .glitch::after{ color: var(--green); left:-2px; animation: glitchBottom 1.2s linear 1; }
+  .glitch::before{ color: var(--red); left:2px; animation: glitchTop 1.2s linear 1 both; }
+  .glitch::after{ color: var(--green); left:-2px; animation: glitchBottom 1.2s linear 1 both; }
   @keyframes glitchTop{
     0%{ clip-path: inset(0 0 85% 0); transform: translate(-3px,-1px); opacity:0.9; }
     12%{ clip-path: inset(10% 0 60% 0); transform: translate(3px,1px); }
@@ -147,30 +184,30 @@
 
   .hero-sub{
     margin-top: 26px;
-    font-family: var(--body);
     font-size: clamp(1.05rem, 1.6vw, 1.3rem);
     color: rgba(236,236,241,0.78);
     max-width: 46ch;
-    font-weight: 400;
   }
+  .hero-sub em{ font-style: normal; color: var(--text); }
   .cursor{ display:inline-block; color: var(--red); animation: blink 1s steps(1) infinite; }
   @keyframes blink{ 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
 
   .hero-meta{
     margin-top: 36px;
-    display:flex; gap: 22px; flex-wrap: wrap;
+    display:flex; gap: 10px 24px; flex-wrap: wrap;
     font-family: var(--mono); font-size: 0.82rem; color: rgba(236,236,241,0.5);
   }
-  .hero-meta span strong{ color: rgba(236,236,241,0.9); font-weight: 500; }
+  .hero-meta span::before{ content:'> '; color: var(--red); }
+  .hero-meta strong{ color: rgba(236,236,241,0.9); font-weight: 500; }
+
+  .hero-actions{ margin-top: 36px; display:flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 
   .divergence-line{
-    margin-top: 30px;
     display:inline-flex; align-items:center; gap:8px;
     font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.05em;
     color: var(--muted);
     border: 1px solid var(--line-red); padding: 8px 14px; border-radius: 3px;
-    background: rgba(232,40,63,0.05);
-    width: fit-content;
+    background: var(--red-soft);
   }
   .divergence-line span{ color: var(--red); font-weight: 600; }
 
@@ -179,39 +216,61 @@
     width: min(58vw, 640px); height: min(58vw, 640px);
     opacity: 0.9;
     pointer-events: none;
+    -webkit-mask-image: radial-gradient(circle, #000 60%, transparent 72%);
+    mask-image: radial-gradient(circle, #000 60%, transparent 72%);
   }
   .disk-field svg{ width:100%; height:100%; animation: spin 160s linear infinite; transform-origin: 50% 50%; }
   @keyframes spin{ to{ transform: rotate(360deg); } }
 
+  @media (max-width: 1100px){ .disk-field{ opacity: 0.55; right: -14%; } }
   @media (max-width: 880px){
-    .disk-field{ right: 50%; top: auto; bottom: -12%; transform: translateX(50%); width: 86vw; height: 86vw; opacity: 0.3; }
+    .disk-field{ right: 50%; top: auto; bottom: -18%; transform: translateX(50%); width: 100vw; height: 100vw; opacity: 0.22; }
   }
 
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.02em;
+    background: transparent; border: 1px solid var(--red); color: var(--red); text-decoration:none;
+    padding: 12px 22px; border-radius: 3px; white-space: nowrap;
+    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    display:inline-flex; align-items:center; gap: 10px;
+  }
+  .btn:hover{ background: var(--red); color: var(--bg); transform: translateY(-1px); box-shadow: 0 0 20px var(--red-glow); }
+  .btn .arrow{ transition: transform 0.15s ease; }
+  .btn:hover .arrow{ transform: translateY(2px); }
+  .btn.ghost{ border-color: var(--line); color: var(--muted); }
+  .btn.ghost:hover{ border-color: var(--red); background: transparent; color: var(--red); box-shadow: none; }
+
   /* ---------- SECTION SCAFFOLD ---------- */
-  section.block{ padding: 96px 0; border-bottom: 1px solid var(--line); }
+  section.block{ padding: 104px 0; border-bottom: 1px solid var(--line); scroll-margin-top: var(--nav-h); }
   section.block:last-of-type{ border-bottom: none; }
   .section-head{
-    display:grid; grid-template-columns: 140px 1fr; gap: 24px;
+    display:grid; grid-template-columns: 140px 1fr; gap: 24px; align-items: baseline;
     margin-bottom: 48px;
   }
-  .tag{
-    font-family: var(--mono); font-size: 0.82rem; color: var(--red);
-    padding-top: 6px;
-  }
+  .tag{ font-family: var(--mono); font-size: 0.82rem; color: var(--red); }
+  .tag .idx{ color: var(--muted); }
   h2{
     font-family: var(--mono); font-weight: 600;
     font-size: clamp(1.5rem, 2.8vw, 2.1rem);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.01em; line-height: 1.2;
     color: var(--text);
   }
-  .section-body{ grid-column: 2; }
-  @media (max-width: 680px){
-    .section-head{ grid-template-columns: 1fr; gap: 8px; }
-    .section-body{ grid-column: 1; }
+  h2 .cursor{ margin-left: 4px; font-weight: 400; }
+  .section-body{ margin-left: 164px; }
+  @media (max-width: 760px){
+    section.block{ padding: 72px 0; }
+    .section-head{ grid-template-columns: 1fr; gap: 8px; margin-bottom: 32px; }
+    .section-body{ margin-left: 0; }
+    .wrap{ padding: 0 20px; }
   }
 
+  /* reveal-on-scroll (only when JS runs, so content is never hidden without it) */
+  .js .reveal{ opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .js .reveal.in{ opacity: 1; transform: none; }
+
   /* ---------- ABOUT ---------- */
-  .about-grid{ display:grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: start; }
+  .about-grid{ display:grid; grid-template-columns: 120px 1fr; gap: 44px; align-items: start; }
   .initial-block{
     width: 120px; height: 120px;
     background: var(--panel);
@@ -220,89 +279,132 @@
     display:flex; align-items:center; justify-content:center;
     font-family: var(--mono); font-weight: 700; font-size: 1.6rem;
     border-radius: 4px;
-    box-shadow: 0 0 24px rgba(232,40,63,0.08) inset;
+    box-shadow: 0 0 24px rgba(232,40,63,0.08) inset, 0 0 0 4px var(--bg), 0 0 0 5px var(--line);
+    text-shadow: 0 0 12px var(--red-glow);
   }
-  .about-text p{ color: var(--text); font-size: 1.05rem; max-width: 60ch; }
+  .about-text p{ color: rgba(236,236,241,0.88); font-size: 1.05rem; max-width: 62ch; }
   .about-text p + p{ margin-top: 16px; }
-  .about-text .muted{ color: var(--muted); }
-  @media (max-width: 680px){ .about-grid{ grid-template-columns: 1fr; } }
+  .about-text strong{ color: var(--text); font-weight: 600; }
+  @media (max-width: 760px){
+    .about-grid{ grid-template-columns: 1fr; gap: 28px; }
+    .initial-block{ width: 88px; height: 88px; font-size: 1.25rem; }
+  }
 
   /* ---------- RESEARCH ---------- */
   .interest-grid{
     display:grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
-    background: var(--line); border: 1px solid var(--line);
+    background: var(--line); border: 1px solid var(--line); border-radius: 4px; overflow: hidden;
   }
   .interest{
-    background: var(--panel); padding: 26px 24px;
+    position: relative;
+    background: var(--panel); padding: 28px 26px;
+    transition: background 0.2s ease;
   }
-  .interest .num{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); }
+  .interest::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+    background: var(--red); box-shadow: 0 0 10px var(--red-glow);
+    transform: scaleY(0); transform-origin: top; transition: transform 0.25s ease;
+  }
+  .interest:hover{ background: var(--panel-hi); }
+  .interest:hover::before{ transform: scaleY(1); }
+  /* odd count: let the last card fill the row instead of leaving an empty cell */
+  .interest:last-child:nth-child(odd){ grid-column: 1 / -1; }
+  .interest:last-child:nth-child(odd) p{ max-width: 80ch; }
+  .interest .num{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); letter-spacing: 0.04em; }
   .interest h3{
     font-family: var(--mono); font-weight: 600;
-    font-size: 1.1rem; margin-top: 8px; color: var(--text);
+    font-size: 1.08rem; line-height: 1.35; margin-top: 10px; color: var(--text);
   }
-  .interest p{ margin-top: 8px; color: var(--muted); font-size: 0.92rem; }
+  .interest p{ margin-top: 10px; color: var(--muted); font-size: 0.93rem; }
   .status-note{
     margin-top: 28px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted);
     border-left: 2px solid var(--red); padding-left: 14px;
   }
-  @media (max-width: 680px){ .interest-grid{ grid-template-columns: 1fr; } }
+  @media (max-width: 760px){ .interest-grid{ grid-template-columns: 1fr; } }
 
   /* ---------- PAPERS ---------- */
-  .paper-list{ display:flex; flex-direction: column; }
-  .paper-item{
-    display:grid; grid-template-columns: 90px 1fr auto; gap: 20px; align-items: baseline;
-    padding: 22px 0; border-top: 1px solid var(--line);
+  .note{
+    display:flex; gap: 14px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 4px;
+    padding: 18px 20px; margin-bottom: 28px;
+    color: var(--muted); font-size: 0.93rem;
   }
+  .note .note-icon{ font-family: var(--mono); color: var(--red); flex-shrink: 0; line-height: 1.6; }
+  .note a{ color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line-red); }
+  .note a:hover{ color: var(--red); border-color: var(--red); }
+
+  .paper-list{ list-style: none; }
+  .paper-item{ border-top: 1px solid var(--line); }
   .paper-item:last-child{ border-bottom: 1px solid var(--line); }
+  .paper-item a{
+    display:grid; grid-template-columns: 72px 1fr auto; gap: 20px; align-items: baseline;
+    padding: 22px 16px; margin: 0 -16px;
+    text-decoration: none; border-radius: 3px;
+    transition: background 0.15s ease;
+  }
+  .paper-item a:hover{ background: var(--red-soft); }
   .paper-year{ font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
-  .paper-title{ font-weight: 500; font-size: 1.02rem; }
+  .paper-title{ font-weight: 500; font-size: 1.02rem; line-height: 1.45; }
   .paper-title::before{ content: '> '; color: var(--red); font-family: var(--mono); }
-  .paper-venue{ color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+  .paper-meta{
+    display:flex; flex-wrap: wrap; align-items:center; gap: 8px 12px;
+    margin-top: 8px; color: var(--muted); font-size: 0.86rem;
+  }
+  .chip{
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 2px; padding: 1px 6px;
+  }
   .paper-link{
-    font-family: var(--mono); font-size: 0.78rem; text-decoration: none;
+    font-family: var(--mono); font-size: 0.78rem;
     color: var(--muted); white-space: nowrap;
     transition: color 0.15s ease, text-shadow 0.15s ease;
   }
-  .paper-link:hover{ color: var(--red); text-shadow: 0 0 8px var(--red-glow); }
-  .paper-placeholder{
-    color: var(--muted); font-style: italic; font-size: 0.95rem; padding: 22px 0;
-    font-family: var(--mono);
-  }
-  @media (max-width: 680px){
-    .paper-item{ grid-template-columns: 1fr; gap: 6px; }
+  .paper-item a:hover .paper-link, .paper-item a:hover .paper-title{ color: var(--red); }
+  .paper-item a:hover .paper-link{ text-shadow: 0 0 8px var(--red-glow); }
+  @media (max-width: 760px){
+    .paper-item a{ grid-template-columns: 1fr; gap: 6px; }
   }
 
   /* ---------- CV ---------- */
-  .cv-row{
-    display:flex; align-items:center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
-    background: var(--panel); border: 1px solid var(--line-red); color:#fff; padding: 36px 40px; border-radius: 4px;
+  .cv-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .cv-card{
+    display:flex; flex-direction: column; justify-content: space-between; gap: 24px;
+    background: var(--panel); border: 1px solid var(--line); padding: 30px 32px; border-radius: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
-  .cv-row p{ color: var(--muted); font-size: 0.95rem; max-width: 42ch; }
-  .cv-row h3{ font-family: var(--mono); font-weight: 600; font-size: 1.2rem; margin-bottom: 8px; color: var(--text); }
-  .btn{
-    font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.02em;
-    background: transparent; border: 1px solid var(--red); color: var(--red); text-decoration:none;
-    padding: 14px 26px; border-radius: 3px; white-space: nowrap;
-    transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-    display:inline-block;
-  }
-  .btn:hover{ background: var(--red); color: #07070A; transform: translateY(-1px); box-shadow: 0 0 20px var(--red-glow); }
+  .cv-card:hover{ border-color: var(--line-red); box-shadow: 0 0 28px rgba(232,40,63,0.08); }
+  .cv-card .lang{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); letter-spacing: 0.06em; }
+  .cv-card h3{ font-family: var(--mono); font-weight: 600; font-size: 1.15rem; margin: 8px 0; color: var(--text); }
+  .cv-card p{ color: var(--muted); font-size: 0.93rem; max-width: 42ch; }
+  .cv-card .btn{ align-self: flex-start; }
+  @media (max-width: 760px){ .cv-grid{ grid-template-columns: 1fr; } .cv-card{ padding: 24px; } }
 
   /* ---------- CONTACT ---------- */
-  .contact-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .contact-grid{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
   .contact-item .label{ font-family: var(--mono); font-size: 0.75rem; color: var(--red); text-transform: uppercase; letter-spacing: 0.05em; }
   .contact-item .label::before{ content: '> '; }
-  .contact-item .value{ margin-top: 8px; font-size: 1.05rem; }
-  .contact-item a{ text-decoration: none; border-bottom: 1px solid var(--line); }
+  .contact-item .value{ margin-top: 8px; font-size: 1.05rem; overflow-wrap: anywhere; }
+  .contact-item a{ text-decoration: none; border-bottom: 1px solid var(--line-red); transition: color 0.15s ease, border-color 0.15s ease; }
   .contact-item a:hover{ border-color: var(--red); color: var(--red); }
-  @media (max-width: 680px){ .contact-grid{ grid-template-columns: 1fr; gap: 24px; } }
-
-  footer{
-    padding: 36px 0 56px;
-    font-family: var(--mono); font-size: 0.75rem; color: var(--muted);
-    display:flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-    border-top: 1px solid var(--line);
+  .copy{
+    margin-left: 10px; vertical-align: middle;
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.04em;
+    background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 2px;
+    padding: 2px 8px; cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease;
   }
+  .copy:hover{ color: var(--red); border-color: var(--line-red); }
+  .copy[hidden]{ display:none; }
+  @media (max-width: 760px){ .contact-grid{ grid-template-columns: 1fr; gap: 24px; } }
+
+  /* ---------- FOOTER ---------- */
+  footer{ border-top: 1px solid var(--line); }
+  footer .wrap{
+    padding-top: 32px; padding-bottom: 48px;
+    font-family: var(--mono); font-size: 0.74rem; color: var(--muted);
+    display:flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 24px;
+  }
+  footer a{ color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); }
+  footer a:hover{ color: var(--red); border-color: var(--red); }
 
   /* ---------- DIVERGENCE METER WIDGET ---------- */
   .divergence-meter{
@@ -311,21 +413,26 @@
     background: rgba(13,13,17,0.9); border: 1px solid var(--line-red);
     padding: 10px 14px; border-radius: 4px;
     color: var(--muted);
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    opacity: 1; transition: opacity 0.25s ease;
+    opacity: 0; transform: translateY(8px); pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
   }
-  .divergence-meter.near-footer{ opacity: 0; pointer-events: none; }
+  /* appears once the hero's own divergence readout has scrolled away */
+  .divergence-meter.show{ opacity: 1; transform: none; }
   .divergence-meter .dm-label{ display:block; letter-spacing: 0.06em; margin-bottom: 4px; }
-  .divergence-meter .dm-value{ color: var(--red); font-weight: 600; }
-  @media (max-width: 680px){ .divergence-meter{ display:none; } }
+  .divergence-meter .dm-value{ color: var(--red); font-weight: 600; font-variant-numeric: tabular-nums; }
+  @media (max-width: 760px){ .divergence-meter{ display:none; } }
 </style>
 </head>
 <body>
 
-<nav>
+<a href="#main" class="skip">skip to content</a>
+
+<nav aria-label="Primary">
   <div class="wrap">
-    <a href="#" class="brand">root@pgp-lab:~$</a>
+    <a href="#top" class="brand">root@pgp-lab:~$<span class="caret" aria-hidden="true">_</span></a>
     <ul class="navlinks">
       <li><a href="#about">./about</a></li>
       <li><a href="#research">./research</a></li>
@@ -336,31 +443,38 @@
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero" id="top">
   <div class="wrap">
     <div class="hero-eyebrow"><span class="dot"></span>observing worldline β · grad student, pure mathematics</div>
     <h1 class="name glitch" data-text="Pedro Gomes Pinto">Pedro <span class="last">Gomes Pinto</span></h1>
-    <p class="hero-sub">I study structure for its own sake — currently narrowing down a research direction somewhere between Differential Geometry and Algebraic Topology.<span class="cursor">_</span></p>
+    <p class="hero-sub">I study structure for its own sake — currently narrowing down a research direction somewhere between <em>Differential Geometry</em> and <em>Algebraic Topology</em>.<span class="cursor" aria-hidden="true">_</span></p>
     <div class="hero-meta">
-      <span>&gt; continuing <strong>fall 2026</strong></span>
-      <span>&gt; <strong>masters</strong>, Université de Lorraine</span>
-      <span>&gt; <strong>prev.</strong> Université de Lorraine</span>
+      <span>continuing <strong>fall 2026</strong></span>
+      <span><strong>masters</strong>, Université de Lorraine</span>
+      <span><strong>prev.</strong> Université de Lorraine</span>
     </div>
-    <div class="divergence-line">DIVERGENCE: <span>1.048596%</span></div>
+    <div class="hero-actions">
+      <a href="#papers" class="btn">[ READ_PAPERS ]</a>
+      <a href="#contact" class="btn ghost">[ CONTACT ]</a>
+      <div class="divergence-line" id="divergence-line">DIVERGENCE: <span>1.048596%</span></div>
+    </div>
   </div>
   <div class="disk-field" id="disk-field" aria-hidden="true"></div>
 </header>
 
+<main id="main">
+
 <section class="block" id="about">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">root@lab:~$</div>
-      <h2>cat about.md<span class="cursor">▋</span></h2>
+      <div class="tag"><span class="idx">01 ·</span> about</div>
+      <h2>cat about.md<span class="cursor" aria-hidden="true">▋</span></h2>
     </div>
-    <div class="section-body about-grid">
-      <div class="initial-block">PGP</div>
+    <div class="section-body about-grid reveal">
+      <div class="initial-block" aria-hidden="true">PGP</div>
       <div class="about-text">
-        <p>I want to get a PhD in pure mathematics after completing my masters in Fundamental Mathematics and Applications (research division) at Université de Lorraine. I'm drawn to problems where structure and symmetry do most of the work. What first got me interested in mathematics was the existence of imaginary numbers, in particular their role in second order polynomials' roots, as well as differential calculus, for its applications in Physics.</p>
+        <p>I want to get a PhD in pure mathematics after completing my masters in <strong>Fundamental Mathematics and Applications</strong> (research track) at Université de Lorraine. I'm drawn to problems where structure and symmetry do most of the work.</p>
+        <p>What first got me interested in mathematics was the existence of imaginary numbers — in particular their role in the roots of second-order polynomials — as well as differential calculus, for its applications in physics.</p>
       </div>
     </div>
   </div>
@@ -369,26 +483,26 @@
 <section class="block" id="research">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">root@lab:~$</div>
-      <h2>ls research/ -la<span class="cursor">▋</span></h2>
+      <div class="tag"><span class="idx">02 ·</span> research</div>
+      <h2>ls -la research/<span class="cursor" aria-hidden="true">▋</span></h2>
     </div>
-    <div class="section-body">
+    <div class="section-body reveal">
       <div class="interest-grid">
-        <div class="interest">
+        <article class="interest">
           <div class="num">CASE_01</div>
           <h3>Differential Geometry</h3>
           <p>Global structure of Lorentzian spacetimes; causality theory (global hyperbolicity, chronology protection); orientability and its physical consequences (chirality, spin structures); the geometry of spacelike foliations and the initial value problem in General Relativity.</p>
-        </div>
-        <div class="interest">
+        </article>
+        <article class="interest">
           <div class="num">CASE_02</div>
           <h3>Topological Methods in Quantum Cosmology</h3>
           <p>Superspace and the space of 3-geometries; fiber bundles and foliations over parameter spaces; vacuum tunneling and instanton transitions between topologically distinct universes; the string landscape as a discrete topological phase space.</p>
-        </div>
-        <div class="interest">
+        </article>
+        <article class="interest">
           <div class="num">CASE_03</div>
           <h3>Formal Ontology of Physical Theories</h3>
           <p>Structural realism and the mathematical foundations of physical models; using category theory and sheaf theory to formalize inter-theoretic relations; model-theoretic approaches to multiverse scenarios and simulation hypotheses.</p>
-        </div>
+        </article>
       </div>
       <p class="status-note">currently narrowing down — this list will sharpen as coursework and advisor conversations progress.</p>
     </div>
@@ -398,41 +512,53 @@
 <section class="block" id="papers">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">root@lab:~$</div>
-      <h2>find . -iname "*.pdf"<span class="cursor">▋</span></h2>
+      <div class="tag"><span class="idx">03 ·</span> papers</div>
+      <h2>find . -iname "*.pdf"<span class="cursor" aria-hidden="true">▋</span></h2>
     </div>
-    <div class="section-body">
-      <div class="paper-list">
-        <p class="paper-placeholder">Nothing academically official published yet. If you would prefer an English version of my French papers, send me an e-mail and I shall work on it. If you got any other questions about my work, feel free to ask.</p>
-        <div class="paper-item">
-          <div class="paper-year">2026</div>
-          <div>
-              <div class="paper-title">Inégalités de type Reilly pour les opérateurs de Laplace-Beltrami et de Schrödinger (masters memoir)</div>
-          </div>
-          <a href="InegalitesTypeReilly.pdf" class="paper-link">[ OPEN ]</a>
-        </div>
-        <div class="paper-item">
-          <div class="paper-year">2026</div>
-          <div>
-              <div class="paper-title">Meta-Topological Structures in Narrative Quantum Cosmology</div>
-          </div>
-          <a href="SciADVpaper.pdf" class="paper-link">[ OPEN ]</a>
-        </div>
-        <div class="paper-item">
-          <div class="paper-year">2025</div>
-          <div>
-              <div class="paper-title">La cohomologie de De Rham et l'orientabilité des variétés lisses (undergraduate memoir)</div>
-          </div>
-          <a href="Cohomologypaper.pdf" class="paper-link">[ OPEN ]</a>
-        </div>
-        <div class="paper-item">
-          <div class="paper-year">2023</div>
-          <div>
-              <div class="paper-title">Application de la théorie des noeuds à l'ADN (bachelors memoir)</div>
-          </div>
-          <a href="Knotpaper.pdf" class="paper-link">[ OPEN ]</a>
-        </div>
-      </div>
+    <div class="section-body reveal">
+      <p class="note"><span class="note-icon" aria-hidden="true">[i]</span><span>Nothing officially published yet. If you would like an English version of one of my French papers, <a href="mailto:gppedro3714@gmail.com">send me an email</a> and I'll work on it. If you have any other questions about my work, feel free to ask.</span></p>
+      <ul class="paper-list">
+        <li class="paper-item">
+          <a href="InegalitesTypeReilly.pdf" target="_blank" rel="noopener">
+            <span class="paper-year">2026</span>
+            <span>
+              <span class="paper-title" lang="fr">Inégalités de type Reilly pour les opérateurs de Laplace-Beltrami et de Schrödinger</span>
+              <span class="paper-meta"><span>Master's thesis</span><span class="chip">FR</span></span>
+            </span>
+            <span class="paper-link">[ OPEN ↗ ]</span>
+          </a>
+        </li>
+        <li class="paper-item">
+          <a href="SciADVpaper.pdf" target="_blank" rel="noopener">
+            <span class="paper-year">2026</span>
+            <span>
+              <span class="paper-title">Meta-Topological Structures in Narrative Quantum Cosmology</span>
+              <span class="paper-meta"><span>Paper</span><span class="chip">EN</span></span>
+            </span>
+            <span class="paper-link">[ OPEN ↗ ]</span>
+          </a>
+        </li>
+        <li class="paper-item">
+          <a href="Cohomologypaper.pdf" target="_blank" rel="noopener">
+            <span class="paper-year">2025</span>
+            <span>
+              <span class="paper-title" lang="fr">La cohomologie de De Rham et l'orientabilité des variétés lisses</span>
+              <span class="paper-meta"><span>Undergraduate thesis</span><span class="chip">FR</span></span>
+            </span>
+            <span class="paper-link">[ OPEN ↗ ]</span>
+          </a>
+        </li>
+        <li class="paper-item">
+          <a href="Knotpaper.pdf" target="_blank" rel="noopener">
+            <span class="paper-year">2023</span>
+            <span>
+              <span class="paper-title" lang="fr">Application de la théorie des nœuds à l'ADN</span>
+              <span class="paper-meta"><span>Bachelor's thesis</span><span class="chip">FR</span></span>
+            </span>
+            <span class="paper-link">[ OPEN ↗ ]</span>
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -440,22 +566,25 @@
 <section class="block" id="cv">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">root@lab:~$</div>
-      <h2>open cv.pdf<span class="cursor">▋</span></h2>
+      <div class="tag"><span class="idx">04 ·</span> cv</div>
+      <h2>open cv.pdf<span class="cursor" aria-hidden="true">▋</span></h2>
     </div>
-    <div class="section-body">
-      <div class="cv-row">
+    <div class="section-body cv-grid reveal">
+      <div class="cv-card">
         <div>
-          <h3>Full English CV (PDF)</h3>
-          <p>Education, talks, teaching experience, and awards in one document — keep it current each term.</p>
+          <div class="lang">EN</div>
+          <h3>Curriculum Vitae</h3>
+          <p>Education, talks, teaching experience, and awards in one document.</p>
         </div>
-        <a href="cv.pdf" class="btn">[ DOWNLOAD_CV.PDF ]</a>
+        <a href="cv.pdf" class="btn" download>[ CV_EN.PDF ] <span class="arrow" aria-hidden="true">↓</span></a>
       </div>
-      <div>
-          <h3>Full French CV (PDF)</h3>
-          <p>Pretty much the same but in French.</p>
+      <div class="cv-card">
+        <div>
+          <div class="lang">FR</div>
+          <h3 lang="fr">Curriculum Vitæ</h3>
+          <p>Pretty much the same, but in French.</p>
         </div>
-        <a href="cv_french.pdf" class="btn">[ DOWNLOAD_CV.PDF ]</a>
+        <a href="cv_french.pdf" class="btn" download>[ CV_FR.PDF ] <span class="arrow" aria-hidden="true">↓</span></a>
       </div>
     </div>
   </div>
@@ -464,35 +593,31 @@
 <section class="block" id="contact">
   <div class="wrap">
     <div class="section-head">
-      <div class="tag">root@lab:~$</div>
-      <h2>whois pedro<span class="cursor">▋</span></h2>
+      <div class="tag"><span class="idx">05 ·</span> contact</div>
+      <h2>whois pedro<span class="cursor" aria-hidden="true">▋</span></h2>
     </div>
-    <div class="section-body">
+    <div class="section-body reveal">
       <div class="contact-grid">
         <div class="contact-item">
           <div class="label">Email</div>
-          <div class="value"><a href="mailto:gppedro3714@gmail.com">gppedro3714@gmail.com</a></div>
+          <div class="value"><a href="mailto:gppedro3714@gmail.com" id="email">gppedro3714@gmail.com</a><button type="button" class="copy" id="copy-email" hidden>copy</button></div>
         </div>
         <div class="contact-item">
           <div class="label">Office</div>
           <div class="value">UFR MiM · Mathematics laboratory · Université de Lorraine</div>
         </div>
-
       </div>
     </div>
   </div>
 </section>
 
+</main>
+
 <footer>
-  <p>© 2026 Pedro Gomes Pinto. All rights reserved for site design and unpublished content.</p>
-  <p>
-    Articles on this site are licensed under
-    <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">
-      <img alt="Creative Commons License" style="border-width:0; vertical-align:middle;"
-           src="https://licensebuttons.net/l/by/4.0/88x31.png" />
-      CC BY 4.0
-    </a>.
-  </p>
+  <div class="wrap">
+    <p>© 2026 Pedro Gomes Pinto. All rights reserved for site design and unpublished content.</p>
+    <p>Articles on this site are licensed under <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+  </div>
 </footer>
 
 <div class="divergence-meter" id="divergence-meter" aria-hidden="true">
@@ -501,6 +626,9 @@
 </div>
 
 <script>
+document.documentElement.classList.add('js');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // Signature element: a Poincaré-disk geodesic web, inspired by hyperbolic
 // tessellations (the kind that show up in complex analysis / topology),
 // recolored to read as a lab schematic / circuit trace overlay.
@@ -529,11 +657,7 @@
       return `M ${x1} ${y1} L ${x2} ${y2}`;
     }
     const half = delta/2;
-    const centerDist = r / Math.cos(half);
     const radius = Math.abs(r * Math.tan(half));
-    const phi = t1 + half;
-    const ccx = cx + centerDist*Math.cos(phi);
-    const ccy = cy + centerDist*Math.sin(phi);
     // sweep flag chosen so the arc bulges toward the disk's center
     const sweep = delta > 0 ? 0 : 1;
     return `M ${x1} ${y1} A ${radius} ${radius} 0 0 ${sweep} ${x2} ${y2}`;
@@ -569,30 +693,80 @@
 // idle otherwise. Skipped for reduced-motion users.
 (function(){
   const el = document.getElementById('dm-value');
-  if(!el) return;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduceMotion) return;
+  if(!el || reduceMotion) return;
 
   setInterval(function(){
-    const jitter = (Math.random() * 0.02).toFixed(6);
-    el.textContent = (1.048596 + parseFloat(jitter) - 0.01).toFixed(6) + '%';
+    const jitter = Math.random() * 0.02 - 0.01;
+    el.textContent = (1.048596 + jitter).toFixed(6) + '%';
   }, 2600);
 })();
 
-// Hide the divergence meter once the footer scrolls into view, so it
-// doesn't sit on top of the copyright/license line.
+// Show the floating meter only between the hero readout and the footer, so it
+// never duplicates the hero badge or sits on top of the license line.
 (function(){
   const meter = document.getElementById('divergence-meter');
+  const heroLine = document.getElementById('divergence-line');
   const footer = document.querySelector('footer');
-  if(!meter || !footer) return;
+  if(!meter || !heroLine || !footer) return;
 
-  const observer = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      meter.classList.toggle('near-footer', entry.isIntersecting);
+  let heroVisible = true, footerVisible = false;
+  const update = () => meter.classList.toggle('show', !heroVisible && !footerVisible);
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; update(); }).observe(heroLine);
+  new IntersectionObserver(([e]) => { footerVisible = e.isIntersecting; update(); }).observe(footer);
+})();
+
+// Highlight the nav link of the section currently in view.
+(function(){
+  const links = new Map();
+  document.querySelectorAll('.navlinks a').forEach(a => links.set(a.getAttribute('href').slice(1), a));
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      links.forEach(a => a.removeAttribute('aria-current'));
+      const link = links.get(entry.target.id);
+      if(link){
+        link.setAttribute('aria-current', 'true');
+        // on narrow screens the link row scrolls sideways; keep the active one visible
+        const row = link.closest('.navlinks');
+        if(row.scrollWidth > row.clientWidth){
+          row.scrollTo({ left: link.offsetLeft - row.offsetLeft - 20, behavior: reduceMotion ? 'auto' : 'smooth' });
+        }
+      }
     });
-  }, { rootMargin: '0px 0px -0px 0px' });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('main section[id]').forEach(s => observer.observe(s));
+})();
 
-  observer.observe(footer);
+// Fade sections in as they scroll into view.
+(function(){
+  const items = document.querySelectorAll('.reveal');
+  if(reduceMotion || !('IntersectionObserver' in window)){
+    items.forEach(el => el.classList.add('in'));
+    return;
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -8% 0px' });
+  items.forEach(el => observer.observe(el));
+})();
+
+// One-click copy for the email address (only shown where the Clipboard API exists).
+(function(){
+  const btn = document.getElementById('copy-email');
+  const email = document.getElementById('email');
+  if(!btn || !email || !navigator.clipboard) return;
+  btn.hidden = false;
+  btn.addEventListener('click', function(){
+    navigator.clipboard.writeText(email.textContent).then(function(){
+      btn.textContent = 'copied ✓';
+      setTimeout(function(){ btn.textContent = 'copy'; }, 1800);
+    });
+  });
 })();
 </script>
 
